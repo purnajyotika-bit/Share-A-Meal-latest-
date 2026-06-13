@@ -1,6 +1,7 @@
 import base44 from "@base44/vite-plugin"
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import path from 'path' // 1. Added path import
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,5 +17,10 @@ export default defineConfig({
       visualEditAgent: true
     }),
     react(),
-  ]
+  ],
+  resolve: { // 2. Added resolve block to map the "@" alias to your root directory
+    alias: {
+      '@': path.resolve(__dirname, './'),
+    },
+  },
 });
