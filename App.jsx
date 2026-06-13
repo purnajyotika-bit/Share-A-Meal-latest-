@@ -6,7 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import UserNotRegisteredError from './components/ui/UserNotRegisteredError';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/ui/ProtectedRoute';
 import AppLayout from './components/layout/AppLayout';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
