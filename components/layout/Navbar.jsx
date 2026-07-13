@@ -47,6 +47,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             <Link to="/leaderboard"><Button variant={isActive('/leaderboard') ? 'secondary' : 'ghost'} size="sm">{t('nav_leaderboard')}</Button></Link>
             <Link to="/fundraising"><Button variant={isActive('/fundraising') ? 'secondary' : 'ghost'} size="sm">{t('nav_fundraising')}</Button></Link>
+            <Link to="/organizations"><Button variant={isActive('/organizations') ? 'secondary' : 'ghost'} size="sm">{t('nav_organizations')}</Button></Link>
             {user && <>
               <Link to="/dashboard"><Button variant={isActive('/dashboard') ? 'secondary' : 'ghost'} size="sm">{t('nav_dashboard')}</Button></Link>
               <Link to="/nearby"><Button variant={isActive('/nearby') ? 'secondary' : 'ghost'} size="sm">{t('nav_nearby')}</Button></Link>
@@ -67,7 +68,7 @@ export default function Navbar() {
                 </Link>
               </>
             ) : (
-              <Link to="/"><Button size="sm" className="bg-primary hover:bg-primary/90 text-white">Get started</Button></Link>
+              <Link to="/"><Button size="sm" className="bg-primary hover:bg-primary/90 text-white">{t('get_started')}</Button></Link>
             )}
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -77,6 +78,7 @@ export default function Navbar() {
                 <div className="flex flex-col gap-2 mt-8">
                   <Link to="/leaderboard" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full justify-start">{t('nav_leaderboard')}</Button></Link>
                   <Link to="/fundraising" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full justify-start">{t('nav_fundraising')}</Button></Link>
+                  <Link to="/organizations" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full justify-start">{t('nav_organizations')}</Button></Link>
                   {user && <>
                     <Link to="/dashboard" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full justify-start">{t('nav_dashboard')}</Button></Link>
                     <Link to="/nearby" onClick={() => setOpen(false)}><Button variant="ghost" className="w-full justify-start">{t('nav_nearby')}</Button></Link>

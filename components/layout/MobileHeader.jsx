@@ -2,24 +2,28 @@ import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/lib/LanguageContext';
 
-const CHILD_ROUTES = ['/donation/', '/delivery/', '/profile', '/analytics', '/leaderboard', '/fundraising'];
+const CHILD_ROUTES = ['/donation/', '/delivery/', '/profile', '/analytics', '/leaderboard', '/fundraising', '/organizations'];
 
 export default function MobileHeader() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const isChild = CHILD_ROUTES.some(r => pathname.startsWith(r));
 
-  const titles = {
-    '/profile': 'Profile',
-    '/analytics': 'Analytics',
-    '/leaderboard': 'Leaderboard',
-    '/fundraising': 'Fundraising',
-    '/nearby': 'Nearby',
-    '/dashboard': 'Dashboard',
+  const TITLES = {
+    '/profile':       'nav_profile',
+    '/analytics':     'nav_analytics',
+    '/leaderboard':   'nav_leaderboard',
+    '/fundraising':   'nav_fundraising',
+    '/nearby':        'nav_nearby',
+    '/dashboard':     'nav_dashboard',
+    '/organizations': 'nav_organizations',
   };
-  const title = Object.entries(titles).find(([k]) => pathname.startsWith(k))?.[1] ||
-    (pathname.startsWith('/donation/') ? 'Donation Detail' : pathname.startsWith('/delivery/') ? 'Delivery' : '');
+
+  const titleKey = Object.entries(TITLES).find(([k]) => pathname.startsWith(k))?.[1] ||
+    (pathname.startsWith('/donation/') ? 'page_donation_detail' : pathname.startsWith('/delivery/') ? 'page_delivery' : '');
 
   return (
     <div className="md:hidden flex items-center h-12 px-3 bg-card/80 backdrop-blur-xl border-b border-border sticky top-0 z-40"
@@ -39,7 +43,7 @@ export default function MobileHeader() {
           </div>
         </Link>
       )}
-      <span className="font-semibold text-sm text-foreground flex-1">{title}</span>
+      <span className="font-semibold text-sm text-foreground flex-1">{titleKey ? t(titleKey) : ''}</span>
     </div>
   );
 }

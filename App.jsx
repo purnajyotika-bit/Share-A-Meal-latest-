@@ -7,8 +7,7 @@ import { AuthProvider, useAuth } from './lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import UserNotRegisteredError from './components/ui/UserNotRegisteredError';
 
-// ⚠️ FIXED: Added curly braces to match your component export type!
-import { ProtectedRoute } from './components/ui/ProtectedRoute';
+import ProtectedRoute from './components/ui/ProtectedRoute';
 
 import AppLayout from './components/layout/AppLayout';
 import Home from './pages/Home';
@@ -20,6 +19,7 @@ import Leaderboard from './pages/Leaderboard';
 import DonationDetail from './pages/DonationDetail';
 import Fundraising from './pages/Fundraising';
 import Analytics from './pages/Analytics';
+import Organizations from './pages/Organizations';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -57,6 +57,7 @@ const AuthenticatedApp = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/fundraising" element={<Fundraising />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/organizations" element={<Organizations />} />
           <Route path="*" element={<PageNotFound />} />
         </Route>
       </Route>

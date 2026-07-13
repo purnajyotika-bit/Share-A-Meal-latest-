@@ -7,22 +7,27 @@ import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useExpiryCountdown, formatCountdown } from '@/hooks/useExpiryCountdown';
+import { useLanguage } from '@/lib/LanguageContext';
 
-const statusConfig = {
-  available: { label: 'Available', cls: 'bg-accent/10 text-accent border-accent/20' },
-  claimed:   { label: 'Claimed',   cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-  picked_up: { label: 'Picked Up', cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-  delivered: { label: 'Delivered', cls: 'bg-primary/10 text-primary border-primary/20' },
-  expired:   { label: 'Expired',   cls: 'bg-muted text-muted-foreground border-border' },
+const STATUS_CLASSES = {
+  available: 'bg-accent/10 text-accent border-accent/20',
+  claimed:   'bg-blue-50 text-blue-700 border-blue-200',
+  picked_up: 'bg-amber-50 text-amber-700 border-amber-200',
+  delivered: 'bg-primary/10 text-primary border-primary/20',
+  expired:   'bg-muted text-muted-foreground border-border',
 };
 
-const categoryLabels = {
-  cooked_meals: 'Cooked Meals', raw_ingredients: 'Raw Ingredients',
-  packaged_food: 'Packaged Food', baked_goods: 'Baked Goods',
-  beverages: 'Beverages', other: 'Other',
+const CATEGORY_KEYS = {
+  cooked_meals:     'cat_cooked_meals',
+  raw_ingredients:  'cat_raw_ingredients',
+  packaged_food:    'cat_packaged_food',
+  baked_goods:      'cat_baked_goods',
+  beverages:        'cat_beverages',
+  other:            'cat_other',
 };
 
 export default function DonationCard({ donation, role, userEmail, onClaim, onAcceptDelivery, onPickUp, onExpired }) {
+  const { t } = useLanguage();
   const isActive = donation.status === 'available' || donation.status === 'claimed';
 
   const handleExpire = async () => {
@@ -33,11 +38,19 @@ export default function DonationCard({ donation, role, userEmail, onClaim, onAcc
 
   const remaining = useExpiryCountdown(isActive ? donation : null, handleExpire);
   const countdownText = formatCountdown(remaining);
-  const isUrgent = remaining !== null && remaining > 0 && remaining < 30 * 60 * 1000; // < 30 min
+  const isUrgent = remaining !== null && remaining > 0 && remaining < 30 * 60 * 1000;
 
   if (donation.status === 'expired') return null;
 
-  const s = statusConfig[donation.status] || statusConfig.available;
+  const statusLabelKey = {
+    available: 'status_available',
+    claimed:   'status_claimed',
+    picked_up: 'status_picked_up',
+    delivered: 'status_delivered',
+    expired:   'status_expired',
+  }[donation.status] || 'status_available';
+
+  const statusCls = STATUS_CLASSES[donation.status] || STATUS_CLASSES.available;
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
@@ -52,13 +65,17 @@ export default function DonationCard({ donation, role, userEmail, onClaim, onAcc
             <h3 className="font-semibold text-foreground leading-tight">{donation.title}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">{donation.donor_name}</p>
           </div>
-          <Badge variant="outline" className={`${s.cls} text-[10px] shrink-0`}>{s.label}</Badge>
+          <Badge variant="outline" className={`${statusCls} text-[10px] shrink-0`}>
+            {t(statusLabelKey)}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1"><Package className="w-3 h-3" />{donation.quantity}</span>
-          {donation.category && <span>· {categoryLabels[donation.category] || donation.category}</span>}
+          {donation.category && (
+            <span>· {CATEGORY_KEYS[donation.category] ? t(CATEGORY_KEYS[donation.category]) : donation.category}</span>
+          )}
         </div>
 
         {/* Countdown timer */}
@@ -83,27 +100,29 @@ export default function DonationCard({ donation, role, userEmail, onClaim, onAcc
         <div className="flex gap-2 pt-1">
           <Link to={`/donation/${donation.id}`} className="flex-1">
             <Button size="sm" variant="ghost" className="w-full gap-1 text-muted-foreground hover:text-foreground border border-border">
-              <MessageCircle className="w-3 h-3" /> Chat & Details
+              <MessageCircle className="w-3 h-3" /> {t('chat_details')}
             </Button>
           </Link>
           {role === 'receiver' && donation.status === 'available' && (
-            <Button size="sm" onClick={onClaim} className="w-full bg-primary hover:bg-primary/90 text-white">Claim</Button>
+            <Button size="sm" onClick={onClaim} className="w-full bg-primary hover:bg-primary/90 text-white">
+              {t('claim')}
+            </Button>
           )}
           {role === 'volunteer' && donation.status === 'claimed' && !donation.volunteer_email && (
             <Button size="sm" onClick={onAcceptDelivery} className="w-full bg-primary hover:bg-primary/90 text-white gap-1">
-              <Truck className="w-3 h-3" /> Accept Delivery
+              <Truck className="w-3 h-3" /> {t('accept_delivery')}
             </Button>
           )}
           {role === 'volunteer' && donation.volunteer_email === userEmail && donation.status === 'claimed' && (
             <Button size="sm" onClick={onPickUp} variant="outline" className="w-full gap-1">
-              <CheckCircle2 className="w-3 h-3" /> Mark Picked Up
+              <CheckCircle2 className="w-3 h-3" /> {t('mark_picked_up')}
             </Button>
           )}
           {donation.status === 'picked_up' && donation.qr_code &&
             (donation.volunteer_email === userEmail || donation.claimed_by === userEmail) && (
             <Link to={`/delivery/${donation.id}`} className="flex-1">
               <Button size="sm" variant="outline" className="w-full gap-1">
-                <QrCode className="w-3 h-3" /> Verify Delivery
+                <QrCode className="w-3 h-3" /> {t('verify_delivery')}
               </Button>
             </Link>
           )}
