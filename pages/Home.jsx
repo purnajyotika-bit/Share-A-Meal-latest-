@@ -6,21 +6,26 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
+import { useAuth } from '@/lib/AuthContext';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
 export default function Home() {
   const { t } = useLanguage();
+  const { isAuthenticated } = useAuth();
+
   const { data: donations = [] } = useQuery({
     queryKey: ['donations-stats'],
     queryFn: () => base44.entities.Donation.list(),
     initialData: [],
+    enabled: isAuthenticated,
   });
 
   const { data: users = [] } = useQuery({
     queryKey: ['users-stats'],
     queryFn: () => base44.entities.User.list(),
     initialData: [],
+    enabled: isAuthenticated,
   });
 
   const stats = {

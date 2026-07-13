@@ -4,16 +4,21 @@ import { useQuery } from '@tanstack/react-query';
 import { Trophy, Award } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/lib/AuthContext';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const rankBg = ['bg-amber-100 text-amber-700', 'bg-slate-100 text-slate-600', 'bg-orange-100 text-orange-700'];
 
 export default function Leaderboard() {
+  const { isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: async () => {
       const all = await base44.entities.User.list();
       return all.filter(u => u.role !== 'admin').sort((a, b) => (b.impact_points || 0) - (a.impact_points || 0));
     },
+    enabled: isAuthenticated,
   });
 
   return (

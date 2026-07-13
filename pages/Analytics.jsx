@@ -54,6 +54,7 @@ export default function Analytics() {
   const { data: users = [] } = useQuery({
     queryKey: ['analytics-users'],
     queryFn: () => base44.entities.User.list(),
+    enabled: !!user,
   });
 
   const { data: campaigns = [] } = useQuery({
